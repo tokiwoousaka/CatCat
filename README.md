@@ -29,12 +29,12 @@ Not := \x . x Bool False True   : Bool -> Bool
 
 --上記のANDは次のように展開される
 --AND := \x . \y . x (Forall a . a -> a -> a) y (/\a . \x . \y . y : Forall a . a -> a -> a)
---  : (Forall a . a -> a -> a) -> (Forall a . a -> a -> a) -> (Forall a . a -> a -> a)
+--           : (Forall a . a -> a -> a) -> (Forall a . a -> a -> a) -> (Forall a . a -> a -> a)
 ```
 
 チャーチ数による自然数の定義
 ```
---1〜100 くらいまでは標準で用意しておいても良いかもしれないけど
+--0〜100 くらいまでは標準で用意しておいても良いかもしれないけど
 --それ以上は各々用意したってちょーだい
 0 := /\a . \x . \f . x           : Forall a . a -> (a -> a) -> a
 1 := /\a . \x . \f . f x         : Forall a . a -> (a -> a) -> a
