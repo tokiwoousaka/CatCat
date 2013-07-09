@@ -29,7 +29,7 @@ Not := \x . x Bool False True   : Bool -> Bool
 
 --上記のANDは次のように展開される
 --AND := \x . \y . x (Forall a . a -> a -> a) y (/\a . \x . \y . y : Forall a . a -> a -> a)
-  : (Forall a . a -> a -> a) -> (Forall a . a -> a -> a) -> (Forall a . a -> a -> a)
+--  : (Forall a . a -> a -> a) -> (Forall a . a -> a -> a) -> (Forall a . a -> a -> a)
 ```
 
 チャーチ数による自然数の定義
