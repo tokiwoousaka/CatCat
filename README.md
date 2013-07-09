@@ -34,12 +34,12 @@ Not := \x . x Bool False True   : Bool -> Bool
 
 チャーチ数による自然数の定義
 ```
---１〜１００くらいまでは標準で用意しておいても良いかもしれないけど
+--1〜100 くらいまでは標準で用意しておいても良いかもしれないけど
 --それ以上は各々用意したってちょーだい
-0 := /\a . \x . \f . x          : Forall a . a -> (a -> a) -> a
-1 := /\a . \x . \f . f x        : Forall a . a -> (a -> a) -> a
-2 := /\a . \x . \f . f (f x)    : Forall a . a -> (a -> a) -> a
-3 := /\a . \x . \f . f (f (f x) : Forall a . a -> (a -> a) -> a
+0 := /\a . \x . \f . x           : Forall a . a -> (a -> a) -> a
+1 := /\a . \x . \f . f x         : Forall a . a -> (a -> a) -> a
+2 := /\a . \x . \f . f (f x)     : Forall a . a -> (a -> a) -> a
+3 := /\a . \x . \f . f (f (f x)) : Forall a . a -> (a -> a) -> a
 ...
 ```
 
