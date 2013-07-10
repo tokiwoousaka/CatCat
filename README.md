@@ -14,42 +14,58 @@ CatCatは、λ2(second-order lambda calculus)をベースとした純粋関数�
 
 ブール値の定義
 ```
---ラムダ項 Γ |- Λa . λx . λy . x : ∀a . a -> a- > a を次のように記述する
+--ラムダ項 Γ |- Λa . λx^a . λy^a . x : ∀a . a -> a- > a を次のように記述する
 --今の所、型推論を導入する予定はないため、型は明示的に指定する必要がある
-True  := /\a . \x . \y . x : Forall a . a -> a -> a
-False := /\a . \x . \y . y : Forall a . a -> a -> a
+True  := /\a . \x^a . \y^a . x : Forall a . a -> a -> a
+False := /\a . \x^a . \y^a . y : Forall a . a -> a -> a
 
 --型に名前を付ける、記述を簡略化する。実質、関数定義と同じ
 Bool := Forall a . a -> a -> a
 
 --ブール演算の定義
-And := \x . \y . x Bool y False : Bool -> Bool -> Bool
-Or  := \x . \y . x Bool True y  : Bool -> Bool -> Bool
-Not := \x . x Bool False True   : Bool -> Bool
+And := \x^Bool . \y^Bool . x Bool y False : Bool -> Bool -> Bool
+Or  := \x^Bool . \y^Bool . x Bool True y  : Bool -> Bool -> Bool
+Not := \x^Bool . x Bool False True   : Bool -> Bool
 
---上記のANDは次のように展開される
---AND := \x . \y . x (Forall a . a -> a -> a) y (/\a . \x . \y . y : Forall a . a -> a -> a)
---           : (Forall a . a -> a -> a) -> (Forall a . a -> a -> a) -> (Forall a . a -> a -> a)
+--上記のAndは次のように展開される
+--And := \x^(Forall a . a -> a -> a) . \y^(Forall a . a -> a -> a) . 
+--  x (Forall a . a -> a -> a) y (/\a . \x . \y . y : Forall a . a -> a -> a)
+--    : (Forall a . a -> a -> a) -> (Forall a . a -> a -> a) -> (Forall a . a -> a -> a)
+
+
+--If-Then-Else
+If := /\a . \x^Bool . \y^a . \z^a . x a y z : Forall a . Bool -> a -> a -> a
+```
+
+二組のタプル
+```
+Tuple := /\a, b . \x^a . \y^b . /\c . \f^(a -> b -> c) . f x y 
+  : Forall a, b . a -> b -> (Forall c . (a -> b -> c) -> c)
+
+Fst := /\a, b . \f^(Forall c . (a -> b -> c) -> c) . f a (\x^a . \y^b . x) 
+  : Forall a, b . (Forall c . (a -> b -> c) -> c) -> a
+Snd := /\a, b . \f^(Forall c . (a -> b -> c) -> c) . f b (\x^a . \y^b . y) 
+  : Forall a, b . (Forall c . (a -> b -> c) -> c) -> b
 ```
 
 チャーチ数による自然数の定義
 ```
 --0〜100 くらいまでは標準で用意しておいても良いかもしれないけど
 --それ以上は各々用意したってちょーだい
-0 := /\a . \x . \f . x           : Forall a . a -> (a -> a) -> a
-1 := /\a . \x . \f . f x         : Forall a . a -> (a -> a) -> a
-2 := /\a . \x . \f . f (f x)     : Forall a . a -> (a -> a) -> a
-3 := /\a . \x . \f . f (f (f x)) : Forall a . a -> (a -> a) -> a
+0 := /\a . \x^a . \f^(a -> a) . x           : Forall a . a -> (a -> a) -> a
+1 := /\a . \x^a . \f^(a -> a) . f x         : Forall a . a -> (a -> a) -> a
+2 := /\a . \x^a . \f^(a -> a) . f (f x)     : Forall a . a -> (a -> a) -> a
+3 := /\a . \x^a . \f^(a -> a) . f (f (f x)) : Forall a . a -> (a -> a) -> a
 ...
 ```
 
 その他
 ```
-Id    := /\a . \a . a : Forall a . a -> a
-Const := /\a, b . \a . \b . a : Forall a, b . a -> b -> a
+Id    := /\a . \x^a . x : Forall a . a -> a
+Const := /\a, b . \x^a . \y^b . x : Forall a, b . a -> b -> a
 
 --Constの定義は以下のように書いたものの略記方
---Const := /\a . /\b . \a . \b . a : Forall a . Forall b . a -> b -> a
+--Const := /\a . /\b . \x^a . \y^b . x : Forall a . Forall b . a -> b -> a
 ```
 
 モジュール
