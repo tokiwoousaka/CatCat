@@ -39,12 +39,13 @@ If := /\a . \x^Bool . \y^a . \z^a . x a y z : Forall a . Bool -> a -> a -> a
 
 二組のタプル
 ```
---<a, b> は <a> , <b>の略記方 ... この辺の書き方はもうちょっと練り込む必要あり
-Tuple := <a, b> . (Forall c . (a -> b -> c) -> c) 
-MakeTuple := /\a, b . \x^a . \y^b . /\c . \f^(a -> b -> c) . f x y : Forall a, b . a -> b -> Tuple a b
+--<a, b> は <a> . <b>の略記方 ... この辺の書き方はもうちょっと練り込む必要あり
+Tuple := <a, b> . Forall c . (a -> b -> c) -> c
+MakeTuple := /\a, b . \x^a . \y^b . 
+  /\c . \f^(a -> b -> c) . f x y : Forall a, b . a -> b -> Tuple a b
 
-Fst := /\a, b . \f^(Tuple a b) . f a (\x^a . \y^b . x) : Forall a, b . (Tuple a b) -> a
-Snd := /\a, b . \f^(Tuple a b) . f b (\x^a . \y^b . y) : Forall a, b . (Tuple a b) -> b
+Fst := /\a, b . \f^Tuple a b . f a (\x^a . \y^b . x) : Forall a, b . Tuple a b -> a
+Snd := /\a, b . \f^Tuple a b . f b (\x^a . \y^b . y) : Forall a, b . Tuple a b -> b
 ```
 
 チャーチ数による自然数の定義
