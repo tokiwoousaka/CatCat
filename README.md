@@ -29,7 +29,7 @@ Not := \x^Bool . x Bool False True   : Bool -> Bool
 
 --上記のAndは次のように展開される
 --And := \x^(Forall a . a -> a -> a) . \y^(Forall a . a -> a -> a) . 
---  x (Forall a . a -> a -> a) y (/\a . \x . \y . y : Forall a . a -> a -> a)
+--  x (Forall a . a -> a -> a) y (/\a . \x^a . \y^a . y : Forall a . a -> a -> a)
 --    : (Forall a . a -> a -> a) -> (Forall a . a -> a -> a) -> (Forall a . a -> a -> a)
 
 
