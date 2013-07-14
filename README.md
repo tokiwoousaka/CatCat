@@ -60,7 +60,7 @@ Either := ^a, b . /\c . (a -> c) -> (b -> c) -> c
 
 Left := /\a, b . \x^a . /\c . \f^(a -> c) . \g^(b -> c) . f x
   : Forall a, b . a -> Either a b
-Right := /\a, b . \x^b . /\c . \f^(a -> c) . \g^(b -> c) . f x
+Right := /\a, b . \x^b . /\c . \f^(a -> c) . \g^(b -> c) . g x
   : Forall a, b . b -> Either a b
 
 MatchEither := /\a, b . /\c . \x^(Either a b) . \f^(a -> c) . \g^(b -> c) 
