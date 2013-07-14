@@ -64,7 +64,7 @@ RIGHT := /\a, b . \x^b . /\c . \f^(a -> c) . \g^(b -> c) . g x
   : Forall a, b . b -> Either a b
 
 MatchEither := /\a, b . /\c . \x^(Either a b) . \f^(a -> c) . \g^(b -> c) 
-  . x a b c f g : Forall a, b . (Forall c . Either a b -> (a -> c) -> (b -> c) -> c)
+  . x c f g : Forall a, b . (Forall c . Either a b -> (a -> c) -> (b -> c) -> c)
 ```
 
 チャーチ数による自然数の定義
