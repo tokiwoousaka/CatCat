@@ -32,7 +32,6 @@ Not := \x^Bool . x Bool False True   : Bool -> Bool
 --  x (Forall a . a -> a -> a) y (/\a . \x^a . \y^a . y : Forall a . a -> a -> a)
 --    : (Forall a . a -> a -> a) -> (Forall a . a -> a -> a) -> (Forall a . a -> a -> a)
 
-
 --If-Then-Else
 If := /\a . \x^Bool . \y^a . \z^a . x a y z : Forall a . Bool -> a -> a -> a
 
