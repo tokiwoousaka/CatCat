@@ -43,7 +43,7 @@ Const := /\a, b . \x^a . \y^b . x : Forall a, b . a -> b -> a
 --Const := /\a . /\b . \x^a . \y^b . x : Forall a . Forall b . a -> b -> a
 ```
 
-二tch組のタプル
+対
 ```
 --^a, b は ^a . ^bの略記方
 Tuple := ^a, b . Forall c . (a -> b -> c) -> c
