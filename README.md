@@ -4,7 +4,7 @@ CatCat
 ※ この言語は妄想中だよ！処理系の無い言語なんてまったく評するに値しないってばっちゃが言ってた！！
 
 CatCatは、λ2(second-order lambda calculus)をベースとした純粋関数型プログラミング言語です。  
-この言語は、有用な開発環境を目的としたものではなく、型付きラムダ計算における全称量化による多相化の基本中の基本をコンピュータによって再現する事を目標としています。  
+この言語は、有用な開発環境を目的としたものではなく、型付きラムダ計算における全称量化による多相化の基本をコンピュータによって再現する事を目標としています。  
 そのため、浮動小数点数の計算や演算子の中置記法はおろか、標準入出力ですら言語仕様には含まれません。  
 また、依存型はλΠと呼ばれるλ2とは異なる型付きラムダ計算の概念となるため、本言語には含まれません。  
 
@@ -12,7 +12,7 @@ CatCatは、λ2(second-order lambda calculus)をベースとした純粋関数�
 
 ### サンプルプログラム ###
 
-ブール値の定義
+基本
 ```
 --ラムダ項 Γ |- Λa . λx^a . λy^a . x : ∀a . a -> a- > a を次のように記述する
 --今の所、型推論を導入する予定はないため、型は明示的に指定する必要がある
@@ -35,17 +35,37 @@ Not := \x^Bool . x Bool False True   : Bool -> Bool
 
 --If-Then-Else
 If := /\a . \x^Bool . \y^a . \z^a . x a y z : Forall a . Bool -> a -> a -> a
+
+--Id, Const
+Id    := /\a . \x^a . x : Forall a . a -> a
+Const := /\a, b . \x^a . \y^b . x : Forall a, b . a -> b -> a
+
+--Constの定義は以下のように書いたものの略記方
+--Const := /\a . /\b . \x^a . \y^b . x : Forall a . Forall b . a -> b -> a
 ```
 
-二組のタプル
+二tch組のタプル
 ```
---<a, b> は <a> . <b>の略記方 ... この辺の書き方はもうちょっと練り込む必要あり
-Tuple := <a, b> . Forall c . (a -> b -> c) -> c
-MakeTuple := /\a, b . \x^a . \y^b . 
+--^a, b は ^a . ^bの略記方
+Tuple := ^a, b . Forall c . (a -> b -> c) -> c
+TUPLE := /\a, b . \x^a . \y^b . 
   /\c . \f^(a -> b -> c) . f x y : Forall a, b . a -> b -> Tuple a b
 
 Fst := /\a, b . \f^Tuple a b . f a (\x^a . \y^b . x) : Forall a, b . Tuple a b -> a
 Snd := /\a, b . \f^Tuple a b . f b (\x^a . \y^b . y) : Forall a, b . Tuple a b -> b
+```
+
+Either
+```
+Either := ^a, b . /\c . (a -> c) -> (b -> c) -> c
+
+Left := /\a, b . \x^a . /\c . \f^(a -> c) . \g^(b -> c) . f x
+  : Forall a, b . a -> Either a b
+Right := /\a, b . \x^b . /\c . \f^(a -> c) . \g^(b -> c) . f x
+  : Forall a, b . b -> Either a b
+
+MatchEither := /\a, b . /\c . \x^(Either a b) . \f^(a -> c) . \g^(b -> c) 
+  . x a b c f g : Forall a, b . (Forall c . Either a b -> (a -> c) -> (b -> c) -> c)
 ```
 
 チャーチ数による自然数の定義
@@ -57,15 +77,6 @@ Snd := /\a, b . \f^Tuple a b . f b (\x^a . \y^b . y) : Forall a, b . Tuple a b -
 2 := /\a . \x^a . \f^(a -> a) . f (f x)     : Forall a . a -> (a -> a) -> a
 3 := /\a . \x^a . \f^(a -> a) . f (f (f x)) : Forall a . a -> (a -> a) -> a
 ...
-```
-
-その他
-```
-Id    := /\a . \x^a . x : Forall a . a -> a
-Const := /\a, b . \x^a . \y^b . x : Forall a, b . a -> b -> a
-
---Constの定義は以下のように書いたものの略記方
---Const := /\a . /\b . \x^a . \y^b . x : Forall a . Forall b . a -> b -> a
 ```
 
 モジュール
