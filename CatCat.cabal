@@ -2,14 +2,14 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                CatCat
-version:             0.1.0.0
+version:             0.1.0.1
 synopsis:            Programming Language CatCat
-description:         This is programming language CatCat as Second-order lambda calculus.
+description:         This is a programming language CatCat as Second-order lambda calculus.
 license:             BSD3
 license-file:        LICENSE
 author:              tune
 maintainer:          tune
-copyright:           2013(C) tune
+copyright:           Copyright (C) 2013 tune
 category:            Language
 build-type:          Simple
 cabal-version:       >=1.8
@@ -17,7 +17,7 @@ cabal-version:       >=1.8
 library
   exposed-modules:     Language.CatCat
   -- other-modules:       
-  build-depends:       base ==4.6.*
+  build-depends:       base ==4.6.*, trifecta >=1.1
   hs-source-dirs:      src
 
 source-repository head
