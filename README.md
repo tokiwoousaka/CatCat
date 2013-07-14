@@ -16,8 +16,8 @@ CatCatは、λ2(second-order lambda calculus)をベースとした純粋関数�
 ```
 --ラムダ項 Γ |- Λa . λx^a . λy^a . x : ∀a . a -> a- > a を次のように記述する
 --今の所、型推論を導入する予定はないため、型は明示的に指定する必要がある
-True  := /\a . \x^a . \y^a . x : Forall a . a -> a -> a
-False := /\a . \x^a . \y^a . y : Forall a . a -> a -> a
+TRUE := /\a . \x^a . \y^a . x : Forall a . a -> a -> a
+FALSE := /\a . \x^a . \y^a . y : Forall a . a -> a -> a
 
 --型に名前を付ける、記述を簡略化する。実質、関数定義と同じ
 Bool := Forall a . a -> a -> a
@@ -58,9 +58,9 @@ Either
 ```
 Either := ^a, b . /\c . (a -> c) -> (b -> c) -> c
 
-Left := /\a, b . \x^a . /\c . \f^(a -> c) . \g^(b -> c) . f x
+LEFT := /\a, b . \x^a . /\c . \f^(a -> c) . \g^(b -> c) . f x
   : Forall a, b . a -> Either a b
-Right := /\a, b . \x^b . /\c . \f^(a -> c) . \g^(b -> c) . g x
+RIGHT := /\a, b . \x^b . /\c . \f^(a -> c) . \g^(b -> c) . g x
   : Forall a, b . b -> Either a b
 
 MatchEither := /\a, b . /\c . \x^(Either a b) . \f^(a -> c) . \g^(b -> c) 
