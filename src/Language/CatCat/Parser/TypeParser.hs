@@ -36,7 +36,7 @@ type BasicExpr = TypeExpr TypeVarName
 
 -- [test case]
 -- parseTest (typeExpression <* eof) "^a, b . Forall c . a -> b -> c"
--- parseTest (typeExpression <* eof) "Forall a, b . a -> (a -> b) -> b)"
+-- parseTest (typeExpression <* eof) "Forall a, b . a -> (a -> b) -> b"
 
 commaSepSyn :: String -> (TypeVarName -> BasicExpr -> BasicExpr) -> Parser BasicExpr
 commaSepSyn s c = let
