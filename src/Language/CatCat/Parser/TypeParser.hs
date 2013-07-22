@@ -15,6 +15,7 @@ data TypeExpr a
   = TypeForall a (TypeExpr a)
   | TypeArg a (TypeExpr a)
   | TypeVar a (TypeExpr a)
+  | TypeDefName DefinedName (TypeExpr a)
   | TypeNest (TypeExpr a) (TypeExpr a)
   | TypeApply (TypeExpr a) (TypeExpr a)
   | TypeNil
@@ -25,15 +26,17 @@ instance Monoid (TypeExpr a) where
   x `mappend` y = x `typeAppend` y
 
 typeAppend :: TypeExpr a -> TypeExpr a -> TypeExpr a
-typeAppend (TypeForall x n) l = TypeForall x $ n `typeAppend` l
-typeAppend (TypeArg    x n) l = TypeArg    x $ n `typeAppend` l
-typeAppend (TypeVar    x n) l = TypeVar    x $ n `typeAppend` l
-typeAppend (TypeNest   e n) l = TypeNest   e $ n `typeAppend` l
-typeAppend (TypeApply  e n) l = TypeApply  e $ n `typeAppend` l
-typeAppend TypeNil          l = l
+typeAppend (TypeForall  x n) l = TypeForall  x $ n `typeAppend` l
+typeAppend (TypeArg     x n) l = TypeArg     x $ n `typeAppend` l
+typeAppend (TypeVar     x n) l = TypeVar     x $ n `typeAppend` l
+typeAppend (TypeDefName x n) l = TypeDefName x $ n `typeAppend` l
+typeAppend (TypeNest    e n) l = TypeNest    e $ n `typeAppend` l
+typeAppend (TypeApply   e n) l = TypeApply   e $ n `typeAppend` l
+typeAppend TypeNil           l = l
 
 -------------------
 -- Parser
+
 type BasicExpr = TypeExpr TypeVarName
 
 -- [test case]
@@ -55,12 +58,15 @@ typeArg = commaSepSyn "^" TypeArg
 typeVar :: Parser BasicExpr
 typeVar = TypeVar <$> (TypeVarName <$> lWord) <*> pure TypeNil
 
+typeDefName :: Parser (TypeExpr a)
+typeDefName = TypeDefName <$> definedName <*> pure TypeNil
+
 typeNest :: Parser BasicExpr
 typeNest = TypeNest <$> parens typeExpr <*> pure TypeNil
 
 typeApply :: Parser BasicExpr
-typeApply = mconcat <$> many (TypeApply <$> applyExpr <*> pure TypeNil)
-  where applyExpr = typeVar <|> typeNest
+typeApply = TypeApply <$> (mconcat <$> many applyExpr) <*> pure TypeNil
+  where applyExpr = typeVar <|> typeDefName <|> typeNest
 
 typeExpr :: Parser BasicExpr
 typeExpr = let

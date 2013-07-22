@@ -2,6 +2,16 @@ module Language.CatCat.Parser.Common where
 import Control.Applicative
 import Text.Trifecta
 
+----------
+
+newtype DefinedName = DefinedName { getDefinedName :: String }
+  deriving (Show, Read, Eq)
+
+definedName :: Parser DefinedName
+definedName = DefinedName <$> uWord
+
+----------
+
 character :: Parser Char
 character = letter <|> digit
 
