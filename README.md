@@ -14,7 +14,7 @@ CatCatは、λ2(second-order lambda calculus)をベースとした純粋関数�
 
 基本
 ```
---ラムダ項 Γ |- Λa . λx^a . λy^a . x : ∀a . a -> a- > a を次のように記述する
+--Λa . λx^a . λy^a . x : ∀a . a -> a- > a を次のように記述する
 --今の所、型推論を導入する予定はないため、型は明示的に指定する必要がある
 TRUE := /\a . \x^a . \y^a . x : Forall a . a -> a -> a
 FALSE := /\a . \x^a . \y^a . y : Forall a . a -> a -> a
@@ -56,7 +56,7 @@ Snd := /\a, b . \f^Tuple a b . f b (\x^a . \y^b . y) : Forall a, b . Tuple a b -
 
 Either
 ```
-Either := ^a, b . /\c . (a -> c) -> (b -> c) -> c
+Either := ^a, b . Forall c . (a -> c) -> (b -> c) -> c
 
 LEFT := /\a, b . \x^a . /\c . \f^(a -> c) . \g^(b -> c) . f x
   : Forall a, b . a -> Either a b
@@ -65,17 +65,6 @@ RIGHT := /\a, b . \x^b . /\c . \f^(a -> c) . \g^(b -> c) . g x
 
 MatchEither := /\a, b . /\c . \x^(Either a b) . \f^(a -> c) . \g^(b -> c) 
   . x c f g : Forall a, b . (Forall c . Either a b -> (a -> c) -> (b -> c) -> c)
-```
-
-チャーチ数による自然数の定義
-```
---0〜100 くらいまでは標準で用意しておいても良いかもしれないけど
---それ以上は各々用意したってちょーだい
-0 := /\a . \x^a . \f^(a -> a) . x           : Forall a . a -> (a -> a) -> a
-1 := /\a . \x^a . \f^(a -> a) . f x         : Forall a . a -> (a -> a) -> a
-2 := /\a . \x^a . \f^(a -> a) . f (f x)     : Forall a . a -> (a -> a) -> a
-3 := /\a . \x^a . \f^(a -> a) . f (f (f x)) : Forall a . a -> (a -> a) -> a
-...
 ```
 
 モジュール
