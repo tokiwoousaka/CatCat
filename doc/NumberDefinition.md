@@ -9,6 +9,8 @@ CatCatは @its_out_of_tune が構想中（2013/7/28現在)の純粋関数型プ�
 基本的な構文
 ------------
 
+λ2(second-order lambda calculus)に法った文法を採用している。
+
 ```
 Id    := /\a . \x^a . x : Forall a . a -> a
 Const := /\a, b . \x^a . \y^b . x : Forall a, b . a -> b -> a
@@ -21,11 +23,11 @@ Unit型とCatCatにおけるパターンマッチの考え方
 Unit := Forall a . a -> a
 UNIT := /\a . \x^a . x : Unit
 
-MatchUnit := undefined : ^a -> Unit -> (Unit -> a) -> a 
+MatchUnit := /\a . \x^a . \f^(Unit -> a) . x : Forall a . Unit -> (Unit -> a) -> a 
 ```
 
 Bool型と論理演算
----------------
+----------------
 
 ```
 TRUE := /\a . \x^a . \y^a . x : Forall a . a -> a -> a
