@@ -61,10 +61,10 @@ typeDefName :: Parser (TypeExpr a)
 typeDefName = TypeDefName <$> definedName <*> pure TypeNil
 
 typeApply :: Parser BasicExpr
-typeApply = TypeNest <$> a <*> pure TypeNil
+typeApply = TypeNest <$> applyExpr <*> pure TypeNil
   where 
-   a = mconcat <$> many (TypeApply <$> applyExpr <*> pure TypeNil)
-   applyExpr = typeVar <|> typeDefName <|> typeNest
+   applyExpr =  mconcat <$> many (TypeApply <$> apParsers <*> pure TypeNil)
+   apParsers = typeVar <|> typeDefName <|> typeNest
 
 typeNest :: Parser BasicExpr
 typeNest = TypeNest <$> parens typeExpr <*> pure TypeNil
