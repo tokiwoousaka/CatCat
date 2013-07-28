@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveFunctor #-}
-
 module Language.CatCat.Parser.TypeParser where
 import Language.CatCat.Parser.Common
 import Control.Applicative
@@ -61,16 +60,32 @@ typeVar = TypeVar <$> (TypeVarName <$> lWord) <*> pure TypeNil
 typeDefName :: Parser (TypeExpr a)
 typeDefName = TypeDefName <$> definedName <*> pure TypeNil
 
+typeApply :: Parser BasicExpr
+typeApply = TypeNest <$> a <*> pure TypeNil
+  where 
+   a = mconcat <$> many (TypeApply <$> applyExpr <*> pure TypeNil)
+   applyExpr = typeVar <|> typeDefName <|> typeNest
+
 typeNest :: Parser BasicExpr
 typeNest = TypeNest <$> parens typeExpr <*> pure TypeNil
 
-typeApply :: Parser BasicExpr
-typeApply = TypeApply <$> (mconcat <$> many applyExpr) <*> pure TypeNil
-  where applyExpr = typeVar <|> typeDefName <|> typeNest
-
 typeExpr :: Parser BasicExpr
 typeExpr = let
-  syns = typeArg <|> typeForall <|> typeApply <|> typeNest 
+  syns = typeArg <|> typeForall <|> typeApply <|> typeNest
   arrs = symbol "->" <|> symbol "."
   in mconcat <$> sepBy syns arrs
 
+-------------------
+--Util 
+
+showTypeExpr :: Show a => TypeExpr a -> String
+showTypeExpr (TypeForall  x n)       = "Forall " ++ show x ++ " . " ++ showTypeExpr n
+showTypeExpr (TypeArg     x n)       = "^" ++ show x ++ " . " ++ showTypeExpr n
+showTypeExpr (TypeVar     x TypeNil) = show x
+showTypeExpr (TypeVar     x n)       = show x ++ " -> " ++ showTypeExpr n
+showTypeExpr (TypeDefName x TypeNil) = show x
+showTypeExpr (TypeDefName x n)       = show x ++ " -> " ++ showTypeExpr n
+showTypeExpr (TypeNest    x TypeNil) = "(" ++ showTypeExpr x ++ ")"
+showTypeExpr (TypeNest    x n)       = "(" ++ showTypeExpr x ++ ") -> " ++ showTypeExpr n
+showTypeExpr (TypeApply   x n)       = showTypeExpr x ++ " " ++ showTypeExpr n
+showTypeExpr TypeNil                 = ""
