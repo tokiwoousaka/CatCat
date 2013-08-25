@@ -60,30 +60,64 @@ Constは`任意の型a、bについて、aを取って「bを取ってaを返す
 Const := /\a, b . \x^a . \y^b . x : Forall a, b . a -> b -> a
 ```
 
-Unit型とCatCatにおけるパターンマッチの考え方
---------------------------------------------
+Bool型とCatCatにおけるパターンマッチ
+------------------------------------
+
+CatCatには、条件分岐やパターンマッチを行うための特別な構文は用意されていない。  
+型毎にパターンマッチのための関数を定義する必要がある。
+
+最も基本的なパターンマッチの例として、`Bool`型を実装する事を考えよう。  
+`Bool`型のパターンマッチは引数として渡された`Bool`値が`TRUE`か`FALSE`かによって異なる型aの値を返す関数として実装すれば良い。即ち、`If`関数である。
+
+では、`Bool`型はどのように定義すれば良いだろうか。  
+ラムダ計算では一般的に、`TRUE`を`/\a . \x^a . \y^a . x`、`FALSE`を`/\a . \x^a . \y^a . y`で表す事が多い。  
+この項からは`Forall a . a -> a -> a`という型が推論できる。
+
+さて、CatCatの名付けは項だけでなく、型についても有効である。つまり`<名前> := <型>`とする事で、任意の型について名前を付ける事ができる。  
+便利のため、`Forall a . a -> a -> a`に`Bool`という名前を付けよう。
+
+```
+Bool := Forall a . a -> a -> a
+```
+
+これにより、`TRUE` `FALSE`はそれぞれ、次のように書くことができる。  
+ここで一つ、ささいな約束を儲けよう、`TRUE`や`FALSE`のような型を構成する値の名前はすべて大文字で表す事にし、
+ただの関数や型名との混同を避けるのが目的だ。
+
+```
+TRUE := /\a . \x^a . \y^a . x : Bool
+FALSE := /\a . \x^a . \y^a . y : Bool
+```
+
+`Bool`型のパターンマッチ、即ち`If`関数は次のように書くことができるだろう。  
+
+`Bool`型の束縛変数`b`の最初の引数に、型の束縛変数`a`を適用している事に注意せよ。  
+これにより、 `Bool`型をもった関数・・・即ち型コンストラクタ`TRUE`および`FALSE`は、後に渡される具体的な値の型が何であるか知る事ができるわけだ。
+
+```
+If := /\a . \b^Bool . \x^a . \y^a . b a x y : Forall a . Bool -> a -> a -> a
+``
+
+```
+--ブール演算の定義
+And := \x^Bool . \y^Bool . x Bool y FALSE : Bool -> Bool -> Bool
+Or  := \x^Bool . \y^Bool . x Bool TRUE y  : Bool -> Bool -> Bool
+Not := \x^Bool . x Bool FALSE TRUE : Bool -> Bool
+```
+
+Unit型
+------
+
+関数プログラミングにおいて、値をひとつだけ持つ`Unit`型は重要な
+
+`Unit`に対するパターンマッチとは、`任意の型aについて、Unit型の値を取り「aを取ってaを返す関数」を返す高階関数`と考える事ができる。
+即ち`Forall a . Unit -> a -> a`で表せる関数がUnit型のパターンマッチになる。
 
 ```
 Unit := Forall a . a -> a
 UNIT := /\a . \x^a . x : Unit
 
-MatchUnit := /\a . \x^a . \f^(Unit -> a) . x : Forall a . Unit -> (Unit -> a) -> a 
-```
-
-Bool型と論理演算
-----------------
-
-```
-TRUE := /\a . \x^a . \y^a . x : Forall a . a -> a -> a
-FALSE := /\a . \x^a . \y^a . y : Forall a . a -> a -> a
-
---型に名前を付ける、記述を簡略化する。実質、関数定義と同じ
-Bool := Forall a . a -> a -> a
-
---ブール演算の定義
-And := \x^Bool . \y^Bool . x Bool y False : Bool -> Bool -> Bool
-Or  := \x^Bool . \y^Bool . x Bool True y  : Bool -> Bool -> Bool
-Not := \x^Bool . x Bool False True : Bool -> Bool
+MatchUnit := /\a . \u^Unit . \x^a . u x : Forall a . Unit -> a -> a
 ```
 
 Tuple型、Either型
