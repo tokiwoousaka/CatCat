@@ -96,7 +96,7 @@ FALSE := /\a . \x^a . \y^a . y : Bool
 
 ```
 If := /\a . \b^Bool . \x^a . \y^a . b a x y : Forall a . Bool -> a -> a -> a
-``
+```
 
 ```
 --ブール演算の定義
