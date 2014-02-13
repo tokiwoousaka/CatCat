@@ -91,12 +91,12 @@ FALSE := /\a . \x^a . \y^a . y : Bool
 
 `Bool`型のパターンマッチ、即ち`If`関数は次のように書くことができるだろう。  
 
-`Bool`型の束縛変数`b`の最初の引数に、型の束縛変数`a`を適用している事に注意せよ。  
-これにより、 `Bool`型をもった関数・・・即ち型コンストラクタ`TRUE`および`FALSE`は、後に渡される具体的な値の型が何であるか知る事ができるわけだ。
-
 ```
 If := /\a . \b^Bool . \x^a . \y^a . b a x y : Forall a . Bool -> a -> a -> a
 ```
+
+`Bool`型の束縛変数`b`の最初の引数に、型の束縛変数`a`を適用している事に注意せよ。  
+これにより、 `Bool`型をもった関数・・・即ち型コンストラクタ`TRUE`および`FALSE`は、後に渡される具体的な値の型が何であるか知る事ができるわけだ。
 
 ```
 --ブール演算の定義
@@ -105,23 +105,32 @@ Or  := \x^Bool . \y^Bool . x Bool TRUE y  : Bool -> Bool -> Bool
 Not := \x^Bool . x Bool FALSE TRUE : Bool -> Bool
 ```
 
-Unit型
-------
+Unit型、Tuple型、Either型
+-------------------------
 
-関数プログラミングにおいて、値をひとつだけ持つ`Unit`型は重要な
+### Unit
+
+関数プログラミングにおいて、値をひとつだけ持つ`Unit`型は重要な役割を持つ。
 
 `Unit`に対するパターンマッチとは、`任意の型aについて、Unit型の値を取り「aを取ってaを返す関数」を返す高階関数`と考える事ができる。
-即ち`Forall a . Unit -> a -> a`で表せる関数がUnit型のパターンマッチになる。
+即ち`Forall a . Unit -> a -> a`で表せる関数がUnit型のパターンマッチになる事がわかる。  
+Bool型のパターンマッチと実装を合わせるのであれば、次のように書くのが良いだろう。
+
+```
+MatchUnit := /\a . \u^Unit . \x^a . u x : Forall a . Unit -> a -> a
+```
+
+上記の実装を満たす`Unit`型およびデータコンストラクタ`UNIT`の実装は以下のとおりとなる。
 
 ```
 Unit := Forall a . a -> a
 UNIT := /\a . \x^a . x : Unit
-
-MatchUnit := /\a . \u^Unit . \x^a . u x : Forall a . Unit -> a -> a
 ```
 
-Tuple型、Either型
------------------
+### Tuple
+
+CatCatは依存型を持たないが、TupleやEitherのような型引数を実現するために、型レベルでのラムダ抽象が必要となる。  
+型レベルのラムダ抽象には、`^`をラムダ記号の代用として使う。従って、`Tuple`の実装は次のようになる。
 
 ```
 Tuple := ^a, b . Forall c . (a -> b -> c) -> c
@@ -131,6 +140,13 @@ TUPLE := /\a, b . \x^a . \y^b .
 Fst := /\a, b . \f^Tuple a b . f a (\x^a . \y^b . x) : Forall a, b . Tuple a b -> a
 Snd := /\a, b . \f^Tuple a b . f b (\x^a . \y^b . y) : Forall a, b . Tuple a b -> b
 ```
+
+```
+MatchTuple := /\a, b . \t^(Tuple a b) . /\c . \f^(a -> b -> c)
+  f (Fst t) (Snd t) : Forall a, b . Tuple a b -> Forall c . (a -> b -> c) -> c
+```
+
+### Either
 
 ```
 Either := ^a, b . Forall c . (a -> c) -> (b -> c) -> c
