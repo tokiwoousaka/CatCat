@@ -1,7 +1,7 @@
 CatCatにおける自然数型実装までの流れ
 ====================================
 
-CatCatは @its_out_of_tune が構想中（2013/8/26現在)の純粋関数型プログラミング言語である。  
+CatCatは @its_out_of_tune が構想中（2014/2現在)の純粋関数型プログラミング言語である。  
 本言語はプリミティブな形を**一切**持たず、BoolやTupleといった基本的な型も関数の型の組み合わせとして表現する。
 
 ここでは、本言語を用いて、最終的に自然数を定義するまでの流れを追うことで、CatCatの型に対する考え方を説明する。
@@ -105,8 +105,11 @@ Or  := \x^Bool . \y^Bool . x Bool TRUE y  : Bool -> Bool -> Bool
 Not := \x^Bool . x Bool FALSE TRUE : Bool -> Bool
 ```
 
-Unit型、Tuple型、Either型
+様々な型の実装
 -------------------------
+
+まだ説明していない、いくつかの機能を紹介しつつ、関数型言語で代表的な色々な型を実装して行く事で、  
+プログラミング言語CatCatへの理解を深めて行こう。
 
 ### Unit
 
@@ -130,7 +133,7 @@ UNIT := /\a . \x^a . x : Unit
 ### Tuple
 
 CatCatは依存型を持たないが、TupleやEitherのような型引数を実現するために、型レベルでのラムダ抽象が必要となる。  
-型レベルのラムダ抽象には、`^`をラムダ記号の代用として使う。従って、`Tuple`の実装は次のようになる。
+型レベルのラムダ抽象には、`^`をラムダ記号の代用として使う。従って、`Tuple`の実装は次のようになるだろう。
 
 ```
 Tuple := ^a, b . Forall c . (a -> b -> c) -> c
@@ -141,12 +144,16 @@ Fst := /\a, b . \f^Tuple a b . f a (\x^a . \y^b . x) : Forall a, b . Tuple a b -
 Snd := /\a, b . \f^Tuple a b . f b (\x^a . \y^b . y) : Forall a, b . Tuple a b -> b
 ```
 
+`Tuple`型のパターンマッチは、`Fst`と`Snd`をそれぞれに対して変数を束縛すれば良いので、以下のようになる。
+
 ```
 MatchTuple := /\a, b . \t^(Tuple a b) . /\c . \f^(a -> b -> c)
   f (Fst t) (Snd t) : Forall a, b . Tuple a b -> Forall c . (a -> b -> c) -> c
 ```
 
 ### Either
+
+aかb、どちらかの値を持つ`Either a b`型は、ここまで説明して来た構文を使って、以下のように実装する事ができる。
 
 ```
 Either := ^a, b . Forall c . (a -> c) -> (b -> c) -> c
@@ -160,12 +167,24 @@ MatchEither := /\a, b . /\c . \x^(Either a b) . \f^(a -> c) . \g^(b -> c)
   . x c f g : Forall a, b . (Forall c . Either a b -> (a -> c) -> (b -> c) -> c)
 ```
 
-Num型の実装
------------
+再帰的な型とNum型の実装
+-----------------------
+
+型に名前を付ければ、再帰的に定義する事が可能となる。
+ここまで来れば、自然数を表すNum型を実装するのは簡単である。
 
 ```
 Num := Either Unit Num
 
 Zero := LEFT Unit
 Succ := \x^Num -> RIGHT x : Num -> Num
+```
+
+以上が、本言語で自然数型を実装するまでの流れとなる。  
+各種演算や二進数型等の実装については、また別途機会があれば明文化しよう。
+
+ひとまず、自然数型の応用として、リスト型の実装を以下に示し、本文を締めくくらせて頂く。
+
+```
+List a := Either Unit (Tuple a (List a)) 
 ```
